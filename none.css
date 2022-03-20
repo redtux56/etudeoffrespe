@@ -1,0 +1,20 @@
+@page {
+ @bottom-right {
+     content: "Page " counter(page)
+ }
+}
+
+body {
+    font-size: 13px;
+    font-size: .8125rem;
+    }
+.t2 {background-color: rgb(255, 255, 128);}
+.modal-details .modal-body .description, .modal-details .modal-body .media-body .italic {
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+.modal-details .modal-body .description-aside .icon-group dd {
+    font-family: Roboto,Helvetica,Arial,sans-serif;
+    margin-bottom: 15px;
+}
+
