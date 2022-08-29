@@ -40,10 +40,10 @@ rangfin=int(rangfin)
 # requete sur le site police emploi
 if rangdeb == 0:
     response = requests.get(
-        "https://candidat.pole-emploi.fr/offres/recherche?domaine="
-        + domaine
+        "https://candidat.pole-emploi.fr/offres/recherche?"
         
-        + "&emission="
+        
+        + "emission="
         + emission
         
         + "&lieux="
@@ -86,9 +86,9 @@ if rangdeb == 0:
             print(nb_result_etat)
             print(str(nb_result_etat * 20) + "-" + str(nb_result_etat * 20 + 19))
             response = requests.get(
-                "https://candidat.pole-emploi.fr/offres/recherche?domaine="
-                + domaine
-                + "&emission="
+                "https://candidat.pole-emploi.fr/offres/recherche?"
+                
+                + "emission="
                 + emission
                 + "&lieux="
                 + lieux
