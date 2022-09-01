@@ -33,25 +33,21 @@ rayon= input()
 print("entre le rang de début")
 rangdeb= input()
 rangdeb=int(rangdeb)
-print(type(rangdeb))
 print("entre le rang de fin")
 rangfin= input()
 rangfin=int(rangfin)
+#defini l'url de requete et permet de rechercher tous les domaines et tous les dates en rajoutant l'operateur tout
+adressepe = "https://candidat.pole-emploi.fr/offres/recherche?"
+if domaine=="tout" and emission=="tout":
+    adressereq=adressepe+ "&lieux="+ lieux+"&rayon="+rayon+"&offresPartenaires=true"
+if domaine=="tout" and emission!="tout":
+    adressereq=adressepe+ "&emission="+emission+"&lieux="+ lieux+"&rayon="+rayon+"&offresPartenaires=true"
+if emission=="tout" and domaine!="tout":
+    adressereq=adressepe+ "&emission="+emission+"&lieux="+ lieux+"&rayon="+rayon+"&offresPartenaires=true"
+
 # requete sur le site police emploi
 if rangdeb == 0:
-    response = requests.get(
-        "https://candidat.pole-emploi.fr/offres/recherche?domaine="
-        + domaine
-        
-        + "&emission="
-        + emission
-        
-        + "&lieux="
-        + lieux
-        +"&rayon="
-        +rayon
-        + "&offresPartenaires=true&range=0-19&tri=0"
-    )
+    response = requests.get(adressereq+"&range=0-19&tri=0")
     soup = BeautifulSoup(response.content, "html.parser")
     # trouver le nombre de résultat de la requête
     # trouver la classe qui contient le nombre de résultats
@@ -62,7 +58,7 @@ if rangdeb == 0:
     nb_result_list = [int(temp) for temp in result.split() if temp.isdigit()]
     # enregistre le nombre de résultats sous forme de int
     nb_result = int(nb_result_list[0])
-    print(nb_result)
+    print("il y a "+str(nb_result)+" offres")
 
 # extraire les référence des offres (chercher tous les attributs li de la classe result
 # defini la liste de reference de l'offre et la liste de reference clé
@@ -83,18 +79,7 @@ if rangdeb == 0:
         nb_result_etat = 1
         # effectue une requete sur les range > 1
         while nb_result_etat <= nb_range:
-            print(nb_result_etat)
-            print(str(nb_result_etat * 20) + "-" + str(nb_result_etat * 20 + 19))
-            response = requests.get(
-                "https://candidat.pole-emploi.fr/offres/recherche?domaine="
-                + domaine
-                + "&emission="
-                + emission
-                + "&lieux="
-                + lieux
-                + "&rayon="+rayon
-                + "&offresPartenaires=true&range="
-                + str(nb_result_etat * 20)
+            response = requests.get(adressereq+"&range="+ str(nb_result_etat * 20)
                 + "-"
                 + str(nb_result_etat * 20 + 19)
                 +"&tri=0"
@@ -106,8 +91,7 @@ if rangdeb == 0:
                 index_offres.append(nb_result_reel)
                 nb_result_reel = nb_result_reel + 1
             nb_result_etat = nb_result_etat + 1
-    print(references)
-    print(index_offres)
+
 rang_offre = 1+rangdeb
 #fonction imprimer offre pdf
 typecontrat=[]
@@ -160,7 +144,7 @@ def pepdf(idoffre, rang):
 
 #recupere le chemin absolu du respertoire courant
 chemin = os.path.abspath('./')
-print(chemin)
+
 #initie les options chromedriver pour l'impression de pdf
 chrome_options = webdriver.ChromeOptions()
 settings = {"recentDestinations": [{"id": "Save as PDF", "origin": "local", "account": ""}], "selectedDestinationId": "Save as PDF", "version": 2}
@@ -239,7 +223,6 @@ for q in df.itertuples():
         pepdf(q[2], q[1])
         typecontrat.append(contrat)
 '''
-print(df)
 partpb=[]
 partinter=[]
 partsc=[]
@@ -253,7 +236,6 @@ print("debut de la verification des cookies partenaire")
 df2= df[(df['nom du partenaire'] != 'pe')]
 #supprime les doublons de la colonn nom du partenaire
 df2=df2.drop_duplicates(subset=['nom du partenaire'])
-print(df2)
 with open("../partco.txt", 'r') as file:
     partco = json.load(file)
 with open("../partproblem.txt", 'r') as file:
@@ -269,27 +251,24 @@ for v in df2.itertuples():
         partco.append(v[3])
         browser.get(v[4])
         print(v[1])
-        print(v[3])
+        print(w[2])
+        print(w[3])
         print("Veuillez cliquer sur accepter les cookies dans le navigateur et validez en appuyant sur une touche")
         pb=input()
+        print("debut des partenaires pb manuel")
         if pb == "pb":
             partpb.append(v[3])
             partpourri.append(v[3])
-            print("debut des partenaires pb manuel")
-            print(v[1])
-            print(v[3])
+            print("ajout de"+v[3]+"dans les partenaires manuels")
+            
         elif pb == "sc":
             partsc.append(v[3])
             partpourri.append(v[3])
-            print("debut des partenaires sc capture d ecran")
-            print(v[1])
-            print(v[3])
+            print("ajout de"+v[3]+"dans les partenaires à capture ecran")
         elif pb =="inter":
             partinter.append(v[3])
             partpourri.append(v[3])
-            print("debut des partenaires interdit")
-            print(v[1])
-            print(v[3])
+            print("ajout de"+v[3]+"dans les partenaires à interdire")
 with open("../partproblem.txt", 'w') as file:
     json.dump(partpb,file)
 with open("../partco.txt", 'w') as file:
@@ -308,18 +287,17 @@ print("debut des partenaires problématique")
 df2= df[(df['nom du partenaire'] != 'pe')]
 for w in df2.itertuples():
     if w[3] in partpb:
+        print(w[1])
+        print(w[2])
+        print(w[3])
         browser.get(w[4])
         print("Veuillez appuyer sur une touche lors de la présentation correcte")
         input()
         browser.execute_script('window.print();')
         time.sleep(0.5)
         essai = os.getcwd()
-        print(essai)
         listpdf = os.listdir('../pdfpar')
-        print(listpdf)
         nom = listpdf[0]
-        print(w[2])
-        print(type(w[2]))
         if isinstance(w[2], int):
             idoffr=str(w[2])
         else:
@@ -331,8 +309,12 @@ for w in df2.itertuples():
         print(w[3]+"pas de pdf")
     elif w[5] == "-":
         print(w[3]+"pas de pdf")
+print("pdf des partenaire capture écran")
 for w in df2.itertuples():
   if w[3] in partsc:
+        print(w[1])
+        print(w[2])
+        print(w[3])
         ss = Screenshot_Clipping.Screenshot()
         browser.get(w[4])
         if isinstance(w[2], int):
@@ -342,11 +324,14 @@ for w in df2.itertuples():
         image = ss.full_Screenshot(browser, save_path=r'.' , image_name=str(w[1])+'-offrepar-'+idoffr+'.pdf')
 #save_path=r'.' 
 
-
+print("pdf des autres partenaires")
 #boucle sur la dataframe df2 - ca chercher chaque offre partenaire et imprime un pdf
 for w in df2.itertuples():
     if w[3] not in partpb and w[3] not in partinter and w[3] not in partsc:
 #va chercher la valeur de la colone 4
+        print(w[1])
+        print(w[2])
+        print(w[3])
         browser.get(w[4])
         time.sleep(3)
         browser.execute_script('window.print();')
