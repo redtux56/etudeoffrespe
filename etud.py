@@ -43,8 +43,9 @@ if domaine=="tout" and emission=="tout":
 if domaine=="tout" and emission!="tout":
     adressereq=adressepe+ "&emission="+emission+"&lieux="+ lieux+"&rayon="+rayon+"&offresPartenaires=true"
 if emission=="tout" and domaine!="tout":
-    adressereq=adressepe+ "&emission="+emission+"&lieux="+ lieux+"&rayon="+rayon+"&offresPartenaires=true"
-
+    adressereq=adressepe+ "&domaine="+domaine+"&lieux="+ lieux+"&rayon="+rayon+"&offresPartenaires=true"
+else :
+    adressereq=adressepe+"&domaine="+domaine+"&emission="+emission+"&lieux="+ lieux+"&rayon="+rayon+"&offresPartenaires=true"
 # requete sur le site police emploi
 if rangdeb == 0:
     response = requests.get(adressereq+"&range=0-19&tri=0")
@@ -251,8 +252,8 @@ for v in df2.itertuples():
         partco.append(v[3])
         browser.get(v[4])
         print(v[1])
-        print(w[2])
-        print(w[3])
+        print(v[2])
+        print(v[3])
         print("Veuillez cliquer sur accepter les cookies dans le navigateur et validez en appuyant sur une touche")
         pb=input()
         print("debut des partenaires pb manuel")
