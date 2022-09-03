@@ -256,7 +256,7 @@ for v in df2.itertuples():
         print(v[3])
         print("Veuillez cliquer sur accepter les cookies dans le navigateur et validez en appuyant sur une touche")
         pb=input()
-        print("debut des partenaires pb manuel")
+        
         if pb == "pb":
             partpb.append(v[3])
             partpourri.append(v[3])
