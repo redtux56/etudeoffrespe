@@ -6,6 +6,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from PIL import Image
 from Screenshot import Screenshot_Clipping
+from hellowork import hellopdf
 #from selenium.webdriver.support import expected_conditions as EC
 #from selenium.webdriver.support.ui import WebDriverWait
 from xlrd import open_workbook
@@ -174,7 +175,8 @@ if rangdeb==0:
     for x in references:
         print(x)
         print(rang_offre)
-        if x[:3] != '128' and x[:3] !='127' and x[:3] !='129' and x[:3] !='139' :
+        #identifie les offres pe par les trois premier chiffre ( a changer) par si les trois dernier caracteres sont des lettres
+        if x[:3] != '128' and x[:3] !='127' and x[:3] !='129' and x[:3] !='139' and x[:3] !='153' and x[:3] !='152' and x[:3] !='151':
             print("ce n'est pas une offre police emploi")
             # lance la page dans le webdriver
             browser.get("https://candidat.pole-emploi.fr/offres/recherche/detail/"+x)
@@ -295,9 +297,11 @@ for w in df2.itertuples():
         print("Veuillez appuyer sur une touche lors de la présentation correcte")
         input()
         browser.execute_script('window.print();')
-        time.sleep(0.5)
+        time.sleep(2)
         essai = os.getcwd()
+        print(essai)
         listpdf = os.listdir('../pdfpar')
+        print(listpdf)
         nom = listpdf[0]
         if isinstance(w[2], int):
             idoffr=str(w[2])
@@ -306,6 +310,12 @@ for w in df2.itertuples():
         #renomme le fichier pdf et le met dans le bon repertoire nommage par valeur de chaque coionne dans le dataframe
         os.rename('../pdfpar/' + nom, '../pdfpar/' + str(w[1])+'-offrepar-'+idoffr+'.pdf')
         shutil.move('../pdfpar/' + str(w[1])+'-offrepar-'+idoffr+'.pdf', './')
+    elif w[3] == "HELLOWORK":
+        if isinstance(w[2], int):
+            idoffr=str(w[2])
+        else:
+            idoffr=w[2]
+        hellopdf(w[4],w[1],idoffr)
     elif w[3] in partinter:
         print(w[3]+"pas de pdf")
     elif w[5] == "-":
@@ -328,7 +338,7 @@ for w in df2.itertuples():
 print("pdf des autres partenaires")
 #boucle sur la dataframe df2 - ca chercher chaque offre partenaire et imprime un pdf
 for w in df2.itertuples():
-    if w[3] not in partpb and w[3] not in partinter and w[3] not in partsc:
+    if w[3] not in partpb and w[3] not in partinter and w[3] not in partsc and w[3]!="HELLOWORK":
 #va chercher la valeur de la colone 4
         print(w[1])
         print(w[2])
