@@ -4,23 +4,25 @@ import weasyprint
 import json
 """
 print("url")
-adresse = input()
+url= input()
 print("rang")     
 rang = input()
+print("idoffre")     
+idoffre = input()
 """
+
 def hellopdf(url, rang, idoffre):
     # requete sur le site hellowork
-    rep = requests.get(url)
+    rep = requests.get(url, headers={'User-Agent': 'Mozilla/5.0'})
     # trouver tous les tags script
     soup = BeautifulSoup(rep.text, "html.parser")
     list_of_scripts = soup.findAll("script")
-    #extrait le 7 élément du script
-    ana=str(list_of_scripts[7])
+    #extrait le 9 élément du script
+    ana=str(list_of_scripts[9])
     #parse l'element 
     sup = BeautifulSoup(ana,"html.parser")
     #convertir en json
     data = json.loads(sup.find('script', type='application/ld+json').text)
-    print(data)
     if data['@type']=='JobPosting':
         print(data['description'])
         #fait une page web avec titre et description
@@ -28,7 +30,7 @@ def hellopdf(url, rang, idoffre):
        
     else:
         print("probleme")
-        rep = requests.get(url)
+        rep = requests.get(url,headers={'User-Agent': 'Mozilla/5.0'})
         soup = BeautifulSoup(rep.content, "html.parser")
         soupe = soup.find(class_="warning")
         web=soupe.get_text()
@@ -37,3 +39,4 @@ def hellopdf(url, rang, idoffre):
     css = []
     css.append(weasyprint.CSS(filename="../none.css"))
     html.write_pdf(str(rang)+"-offrepar-"+idoffre+".pdf", stylesheets=css)
+

@@ -175,7 +175,8 @@ if rangdeb==0:
     for x in references:
         print(x)
         print(rang_offre)
-        if x[:3] != '128' and x[:3] !='127' and x[:3] !='129' and x[:3] !='139' :
+        #identifie les offres pe par les trois premier chiffre ( a changer) par si les trois dernier caracteres sont des lettres
+        if x[:3] != '128' and x[:3] !='127' and x[:3] !='129' and x[:3] !='139' and x[:3] !='153' and x[:3] !='152' and x[:3] !='151':
             print("ce n'est pas une offre police emploi")
             # lance la page dans le webdriver
             browser.get("https://candidat.pole-emploi.fr/offres/recherche/detail/"+x)
@@ -296,9 +297,11 @@ for w in df2.itertuples():
         print("Veuillez appuyer sur une touche lors de la présentation correcte")
         input()
         browser.execute_script('window.print();')
-        time.sleep(0.5)
+        time.sleep(2)
         essai = os.getcwd()
+        print(essai)
         listpdf = os.listdir('../pdfpar')
+        print(listpdf)
         nom = listpdf[0]
         if isinstance(w[2], int):
             idoffr=str(w[2])
