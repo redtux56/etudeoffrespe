@@ -177,7 +177,7 @@ if rangdeb==0:
         print(x)
         print(rang_offre)
         #identifie les offres pe par les trois premier chiffre ( a changer) par si les trois dernier caracteres sont des lettres
-        if x[:3] != '128' and x[:3] !='127' and x[:3] !='129' and x[:3] !='139' and x[:3] !='153' and x[:3] !='152' and x[:3] !='151':
+        if x[:3] != '128' and x[:3] !='127' and x[:3] !='129' and x[:3] !='139' and x[:3] !='153' and x[:3] !='152' and x[:3] !='151' and x[:3] !='154':
             print("ce n'est pas une offre police emploi")
             # lance la page dans le webdriver
             browser.get("https://candidat.pole-emploi.fr/offres/recherche/detail/"+x)
@@ -290,37 +290,41 @@ print("debut des partenaires problématique")
 #defini le dictionnaire df2 sans les valeurs 'pe'
 df2= df[(df['nom du partenaire'] != 'pe')]
 for w in df2.itertuples():
-    if w[3] in partpb:
-        print(w[1])
-        print(w[2])
-        print(w[3])
-        browser.get(w[4])
-        print("Veuillez appuyer sur une touche lors de la présentation correcte")
-        input()
-        browser.execute_script('window.print();')
-        time.sleep(2)
-        essai = os.getcwd()
-        print(essai)
-        listpdf = os.listdir('../pdfpar')
-        print(listpdf)
-        nom = listpdf[0]
-        if isinstance(w[2], int):
-            idoffr=str(w[2])
-        else:
-            idoffr=w[2]
-        #renomme le fichier pdf et le met dans le bon repertoire nommage par valeur de chaque coionne dans le dataframe
-        os.rename('../pdfpar/' + nom, '../pdfpar/' + str(w[1])+'-offrepar-'+idoffr+'.pdf')
-        shutil.move('../pdfpar/' + str(w[1])+'-offrepar-'+idoffr+'.pdf', './')
-    elif w[3] == "HELLOWORK":
-        if isinstance(w[2], int):
-            idoffr=str(w[2])
-        else:
-            idoffr=w[2]
-        hellopdf(w[4],w[1],idoffr)
-    elif w[3] in partinter:
-        print(w[3]+"pas de pdf")
-    elif w[5] == "-":
-        print(w[3]+"pas de pdf")
+#verifie si string ou pas
+    if isinstance(w[2], int):
+        idoffr=str(w[2])
+    else:
+        idoffr=w[2]
+#verifie si le pdf nexiste pas
+    if os.path.exists(str(w[1])+'-offrepar-'+idoffr+'.pdf'):
+        print ("fichier existe")
+    else:
+        if w[3] in partpb:
+            print(w[1])
+            print(w[2])
+            print(w[3])
+            browser.get(w[4])
+            print("Veuillez appuyer sur une touche lors de la présentation correcte")
+            input()
+            browser.execute_script('window.print();')
+            time.sleep(5)
+            essai = os.getcwd()
+            print(essai)
+            listpdf = os.listdir('../pdfpar')
+            print(listpdf)
+            nom = listpdf[0]
+            if isinstance(w[2], int):
+                idoffr=str(w[2])
+            else:
+                idoffr=w[2]
+            #renomme le fichier pdf et le met dans le bon repertoire nommage par valeur de chaque coionne dans le dataframe
+            os.rename('../pdfpar/' + nom, '../pdfpar/' + str(w[1])+'-offrepar-'+idoffr+'.pdf')
+            shutil.move('../pdfpar/' + str(w[1])+'-offrepar-'+idoffr+'.pdf', './')
+
+        elif w[3] in partinter:
+            print(w[3]+"pas de pdf")
+        elif w[5] == "-":
+            print(w[3]+"pas de pdf")
 print("pdf des partenaire capture écran")
 for w in df2.itertuples():
   if w[3] in partsc:
@@ -338,27 +342,44 @@ for w in df2.itertuples():
 
 print("pdf des autres partenaires")
 #boucle sur la dataframe df2 - ca chercher chaque offre partenaire et imprime un pdf
+print("pdf hellowork")
 for w in df2.itertuples():
-    if w[3] not in partpb and w[3] not in partinter and w[3] not in partsc and w[3]!="HELLOWORK":
-#va chercher la valeur de la colone 4
-        print(w[1])
-        print(w[2])
-        print(w[3])
-        browser.get(w[4])
-        time.sleep(3)
-        browser.execute_script('window.print();')
-        time.sleep(1)
-        #liste les fichier dans le repertoire pdfpar le renomme avec l'index
-        
-        listpdf = os.listdir('../pdfpar')
-        nom = listpdf[0]
-        if isinstance(w[2], int):
-            idoffr=str(w[2])
-        else:
-            idoffr=w[2]
-        #renomme le fichier pdf et le met dans le bon repertoire nommage par valeur de chaque coionne dans le dataframe
-        os.rename('../pdfpar/' + nom, '../pdfpar/' + str(w[1])+'-offrepar-'+idoffr+'.pdf')
-        shutil.move('../pdfpar/' + str(w[1])+'-offrepar-'+idoffr+'.pdf', './')
+    if isinstance(w[2], int):
+        idoffr=str(w[2])
+    else:
+        idoffr=w[2]
+    #verifie si le pdf nexiste pas
+    if os.path.exists(str(w[1])+'-offrepar-'+idoffr+'.pdf'):
+        print ("fichier existe")
+    else: 
+        if w[3] not in partpb and w[3] not in partinter and w[3] not in partsc and w[3]=="HELLOWORK":
+            if isinstance(w[2], int):
+                idoffr=str(w[2])
+            else:
+                idoffr=w[2]
+            hellopdf(w[4],w[1],idoffr)
+        print("fin pdf hellowork")
+        print("debut autres partenaires")
+        if w[3] not in partpb and w[3] not in partinter and w[3] not in partsc and w[3]!="HELLOWORK":
+    #va chercher la valeur de la colone 4
+            print(w[1])
+            print(w[2])
+            print(w[3])
+            browser.get(w[4])
+            time.sleep(3)
+            browser.execute_script('window.print();')
+            time.sleep(1)
+            #liste les fichier dans le repertoire pdfpar le renomme avec l'index
+            
+            listpdf = os.listdir('../pdfpar')
+            nom = listpdf[0]
+            if isinstance(w[2], int):
+                idoffr=str(w[2])
+            else:
+                idoffr=w[2]
+            #renomme le fichier pdf et le met dans le bon repertoire nommage par valeur de chaque coionne dans le dataframe
+            os.rename('../pdfpar/' + nom, '../pdfpar/' + str(w[1])+'-offrepar-'+idoffr+'.pdf')
+            shutil.move('../pdfpar/' + str(w[1])+'-offrepar-'+idoffr+'.pdf', './')
 #boucle sur la dataframe df1 - fusionne tous les pdf
 mergepdf = []
 for z in df.itertuples():

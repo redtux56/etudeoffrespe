@@ -12,6 +12,7 @@ idoffre = input()
 '''
 
 def hellopdf(url, rang, idoffre):
+    print("generation de l'offre "+str(rang))
     # requete sur le site hellowork
     rep = requests.get(url, headers={'User-Agent': 'Mozilla/5.0'})
     # trouver tous les tags script
@@ -24,7 +25,7 @@ def hellopdf(url, rang, idoffre):
     #convertir en json
     data = json.loads(sup.find('script', type='application/ld+json').text)
     if data['@type']=='JobPosting':
-        print(data['description'])
+        #print(data['description'])
         #fait une page web avec titre et description
         web="<h1>"+str(data['title'])+"</h1>"+str(data['description'])
        
