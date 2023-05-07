@@ -2,14 +2,14 @@ import requests
 from bs4 import BeautifulSoup
 import weasyprint
 import json
-"""
+'''
 print("url")
 url= input()
 print("rang")     
 rang = input()
 print("idoffre")     
 idoffre = input()
-"""
+'''
 
 def hellopdf(url, rang, idoffre):
     # requete sur le site hellowork
@@ -37,6 +37,19 @@ def hellopdf(url, rang, idoffre):
      # creer un pdf en utilisant la "soup" restante
     html = weasyprint.HTML(string=web)
     css = []
+    css.append(
+        weasyprint.CSS(
+            string="""
+    @page {
+    @top-center {
+     content: "offre n°"""
+            + str(rang)+" Hellowork "+idoffre
+            + """";
+    }
+    }"""
+        )
+    )
     css.append(weasyprint.CSS(filename="../none.css"))
+
     html.write_pdf(str(rang)+"-offrepar-"+idoffre+".pdf", stylesheets=css)
 

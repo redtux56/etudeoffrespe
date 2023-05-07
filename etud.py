@@ -41,12 +41,13 @@ rangfin=int(rangfin)
 adressepe = "https://candidat.pole-emploi.fr/offres/recherche?"
 if domaine=="tout" and emission=="tout":
     adressereq=adressepe+ "&lieux="+ lieux+"&rayon="+rayon+"&offresPartenaires=true"
-if domaine=="tout" and emission!="tout":
+elif domaine=="tout" and emission!="tout":
     adressereq=adressepe+ "&emission="+emission+"&lieux="+ lieux+"&rayon="+rayon+"&offresPartenaires=true"
-if emission=="tout" and domaine!="tout":
+elif emission=="tout" and domaine!="tout":
     adressereq=adressepe+ "&domaine="+domaine+"&lieux="+ lieux+"&rayon="+rayon+"&offresPartenaires=true"
 else :
     adressereq=adressepe+"&domaine="+domaine+"&emission="+emission+"&lieux="+ lieux+"&rayon="+rayon+"&offresPartenaires=true"
+
 # requete sur le site police emploi
 if rangdeb == 0:
     response = requests.get(adressereq+"&range=0-19&tri=0")
