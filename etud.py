@@ -5,7 +5,7 @@ import os
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from PIL import Image
-from Screenshot import Screenshot_Clipping
+from Screenshot import Screenshot
 from hellowork import hellopdf
 #from selenium.webdriver.support import expected_conditions as EC
 #from selenium.webdriver.support.ui import WebDriverWait
@@ -18,7 +18,7 @@ import json
 import shutil
 import time
 import pandas as pd
-import PyPDF2
+from PyPDF2 import PdfWriter
 from io import BytesIO
 start = time.time()
 
@@ -150,7 +150,7 @@ chemin = os.path.abspath('./')
 
 #initie les options chromedriver pour l'impression de pdf
 chrome_options = webdriver.ChromeOptions()
-settings = {"recentDestinations": [{"id": "Save as PDF", "origin": "local", "account": ""}], "selectedDestinationId": "Save as PDF", "version": 2}
+settings = {"recentDestinations": [{"id": "Save as PDF", "origin": "local", "account": ""}], "selectedDestinationId": "Save as PDF", "version": 2,"isHeaderFooterEnabled": False,"isLandscapeEnabled": False}
 prefs = { "savefile.default_directory":chemin+"/pdfpar","download.default_directory":chemin+"/pdfpar","download.prompt_for_download": False, "download.directory_upgrade": True, "safebrowsing.enabled": True,'printing.print_preview_sticky_settings.appState': json.dumps(settings)}
 #verifie les prefs
 #!print(prefs)
@@ -331,13 +331,13 @@ for w in df2.itertuples():
         print(w[1])
         print(w[2])
         print(w[3])
-        ss = Screenshot_Clipping.Screenshot()
+        ss = Screenshot.Screenshot()
         browser.get(w[4])
         if isinstance(w[2], int):
             idoffr=str(w[2])
         else:
             idoffr=w[2]
-        image = ss.full_Screenshot(browser, save_path=r'.' , image_name=str(w[1])+'-offrepar-'+idoffr+'.pdf')
+        image = ss.full_screenshot(browser, save_path=r'.' , image_name=str(w[1])+'-offrepar-'+idoffr+'.pdf', is_load_at_runtime=True,load_wait_time=3)
 #save_path=r'.' 
 
 print("pdf des autres partenaires")
@@ -426,7 +426,7 @@ def ecrirexl():
 
 
 ecrirexl()
-merger = PyPDF2.PdfFileMerger()
+merger = PdfWriter()
 
 for pdf in mergepdf:
     merger.append(pdf)
