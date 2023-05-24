@@ -150,7 +150,7 @@ chemin = os.path.abspath('./')
 
 #initie les options chromedriver pour l'impression de pdf
 chrome_options = webdriver.ChromeOptions()
-settings = {"recentDestinations": [{"id": "Save as PDF", "origin": "local", "account": ""}], "selectedDestinationId": "Save as PDF", "version": 2,"isHeaderFooterEnabled": False,"isLandscapeEnabled": False}
+settings = {"recentDestinations": [{"id": "Save as PDF", "origin": "local", "account": ""}], "selectedDestinationId": "Save as PDF", "version": 2,"isHeaderFooterEnabled": True,"isLandscapeEnabled": False}
 prefs = { "savefile.default_directory":chemin+"/pdfpar","download.default_directory":chemin+"/pdfpar","download.prompt_for_download": False, "download.directory_upgrade": True, "safebrowsing.enabled": True,'printing.print_preview_sticky_settings.appState': json.dumps(settings)}
 #verifie les prefs
 #!print(prefs)
@@ -177,7 +177,7 @@ if rangdeb==0:
         print(x)
         print(rang_offre)
         #identifie les offres pe par les trois premier chiffre ( a changer) par si les trois dernier caracteres sont des lettres
-        if x[:3] != '128' and x[:3] !='127' and x[:3] !='129' and x[:3] !='139' and x[:3] !='153' and x[:3] !='152' and x[:3] !='151' and x[:3] !='154':
+        if x[:3] != '128' and x[:3] !='127' and x[:3] !='129' and x[:3] !='139' and x[:3] !='153' and x[:3] !='152' and x[:3] !='151' and x[:3] !='154' and x[:3] !='155':
             print("ce n'est pas une offre police emploi")
             # lance la page dans le webdriver
             browser.get("https://candidat.pole-emploi.fr/offres/recherche/detail/"+x)
