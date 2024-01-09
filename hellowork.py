@@ -19,7 +19,7 @@ def hellopdf(url, rang, idoffre):
     soup = BeautifulSoup(rep.text, "html.parser")
     list_of_scripts = soup.findAll("script")
     #extrait le 9 élément du script
-    ana=str(list_of_scripts[9])
+    ana=str(list_of_scripts[8])
     #parse l'element 
     sup = BeautifulSoup(ana,"html.parser")
     #convertir en json
