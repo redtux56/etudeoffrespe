@@ -4,6 +4,7 @@ from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 import os
 import json
 chemin = os.path.abspath('./')
+print(chemin)
 
 #initie les options chromedriver pour l'impression de pdf
 chrome_options = webdriver.ChromeOptions()
@@ -13,13 +14,13 @@ prefs = { "savefile.default_directory":chemin+"/pdfpar","download.default_direct
 #!print(prefs)
 #definir le chemin des data chrome (verifier si cross platform) et ajoute au option de chromedriver
 chromeuser=chemin+"/chrome-data"
-cap = DesiredCapabilities.CHROME
-cap = {'binary_location': chemin+"/chrome-win64/chrome-win64/chrome.exe"}
+
+chrome_options.binary_location =chemin+"/chrome-win64/chrome-win64/chrome.exe"
 
 chrome_options.add_argument('--user-data-dir='+chromeuser)
 chrome_options.add_experimental_option('prefs', prefs)
 chrome_options.add_argument('--kiosk-printing')
 #lance le webdriver chromedriver.exe doit etre dans le repertoire
-browser = webdriver.Chrome(options=chrome_options,desired_capabilities=cap)
+browser = webdriver.Chrome(options=chrome_options)
 #creer le repartoire pour l'etude et change de repertoire
 browser.get('http://www.google.com/');

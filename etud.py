@@ -1,19 +1,20 @@
 import requests
 from bs4 import BeautifulSoup
 import weasyprint
-import os
+import os, unicodedata
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from PIL import Image
-from Screenshot import Screenshot
+#from Screenshot import Screenshot
 from hellowork import hellopdf
 #from selenium.webdriver.support import expected_conditions as EC
 #from selenium.webdriver.support.ui import WebDriverWait
 from xlrd import open_workbook
 
 from xlutils.copy import copy
-
+import shutil
+import re
 import xlwt
 import json
 import shutil
@@ -157,14 +158,12 @@ prefs = { "savefile.default_directory":chemin+"/pdfpar","download.default_direct
 #!print(prefs)
 #definir le chemin des data chrome (verifier si cross platform) et ajoute au option de chromedriver
 chromeuser=chemin+"/chrome-data"
-cap = DesiredCapabilities.CHROME
-cap = {'binary_location': chemin+"/chrome-win64/chrome-win64/chrome.exe"}
-
+chrome_options.binary_location =chemin+"/chrome-win64/chrome-win64/chrome.exe"
 chrome_options.add_argument('--user-data-dir='+chromeuser)
 chrome_options.add_experimental_option('prefs', prefs)
 chrome_options.add_argument('--kiosk-printing')
 #lance le webdriver chromedriver.exe doit etre dans le repertoire
-browser = webdriver.Chrome(options=chrome_options,desired_capabilities=cap)
+browser = webdriver.Chrome(options=chrome_options)
 #creer le repartoire pour l'etude et change de repertoire
 try:
     os.makedirs('./pdf'+"-"+lieux+"-"+emission+"jours"+"-"+domaine+"-rayon"+rayon+"km")
@@ -181,7 +180,9 @@ if rangdeb==0:
         print(x)
         print(rang_offre)
         #identifie les offres pe par les trois premier chiffre ( a changer) par si les trois dernier caracteres sont des lettres
-        if x[:3] != '128' and x[:3] !='127' and x[:3] !='129' and x[:3] !='139' and x[:3] !='153' and x[:3] !='152' and x[:3] !='151' and x[:3] !='154' and x[:3] !='155'and x[:3] !='167':
+        if not x[-4:].isalpha():
+
+        #if x[:3] != '196' and x[:3] !='194' and x[:3] !='197' and x[:3] !='139' and x[:3] !='153' and x[:3] !='198' and x[:3] !='151' and x[:3] !='154' and x[:3] !='155'and x[:3] !='167' and x[:3] !='174':
             print("ce n'est pas une offre police emploi")
             # lance la page dans le webdriver
             browser.get("https://candidat.pole-emploi.fr/offres/recherche/detail/"+x)
@@ -361,6 +362,9 @@ for w in df2.itertuples():
                 idoffr=str(w[2])
             else:
                 idoffr=w[2]
+            print(w[1])
+            print(w[2])
+            print(w[3])
             hellopdf(w[4],w[1],idoffr)
         print("fin pdf hellowork")
         print("debut autres partenaires")
@@ -373,16 +377,24 @@ for w in df2.itertuples():
             time.sleep(3)
             browser.execute_script('window.print();')
             time.sleep(1)
+            def clean_filename(filename):
+                # Remplace les caractères interdits par un underscore
+                return re.sub(r'[^a-zA-Z0-9._-]', '_', filename)
+
+
             #liste les fichier dans le repertoire pdfpar le renomme avec l'index
-            
             listpdf = os.listdir('../pdfpar')
             nom = listpdf[0]
+            print(nom)
+            nomclean=clean_filename(nom)
+            os.rename(f'../pdfpar/{nom}', f'../pdfpar/{nomclean}')
+            print(nomclean)
             if isinstance(w[2], int):
                 idoffr=str(w[2])
             else:
                 idoffr=w[2]
             #renomme le fichier pdf et le met dans le bon repertoire nommage par valeur de chaque coionne dans le dataframe
-            os.rename('../pdfpar/' + nom, '../pdfpar/' + str(w[1])+'-offrepar-'+idoffr+'.pdf')
+            os.rename('../pdfpar/' + nomclean, '../pdfpar/' + str(w[1])+'-offrepar-'+idoffr+'.pdf')
             shutil.move('../pdfpar/' + str(w[1])+'-offrepar-'+idoffr+'.pdf', './')
 #boucle sur la dataframe df1 - fusionne tous les pdf
 mergepdf = []

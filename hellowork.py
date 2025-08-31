@@ -19,22 +19,31 @@ def hellopdf(url, rang, idoffre):
     soup = BeautifulSoup(rep.text, "html.parser")
     list_of_scripts = soup.findAll("script")
     #extrait le 9 élément du script
-    ana=str(list_of_scripts[8])
-    #parse l'element 
-    sup = BeautifulSoup(ana,"html.parser")
-    #convertir en json
-    data = json.loads(sup.find('script', type='application/ld+json').text)
-    if data['@type']=='JobPosting':
-        #print(data['description'])
-        #fait une page web avec titre et description
-        web="<h1>"+str(data['title'])+"</h1>"+str(data['description'])
-       
+    analy=list_of_scripts[6]
+    ana=str(list_of_scripts[6])
+    type_attr = analy.get('type', '').lower()
+    if type_attr == 'application/ld+json':
+        print("Trouvé un script LD+JSON")
+        sup = BeautifulSoup(ana,"html.parser")
+        #convertir en json
+        data = json.loads(sup.find('script', type='application/ld+json').text)
+        if data['@type']=='JobPosting':
+            #fait une page web avec titre et description
+            web="<h1>"+str(data['title'])+"</h1>"+str(data['description'])
+            #fait une page web avec titre et description
+            web="<h1>"+str(data['title'])+"</h1>"+str(data['description'])
+        else:
+            print("probleme")
+            rep = requests.get(url,headers={'User-Agent': 'Mozilla/5.0'})
+            soup = BeautifulSoup(rep.content, "html.parser")
+            #soupe = soup.find(class_="warning")
+            web="<h1>offre non disponible</h1>"+soup.get_text()
     else:
-        print("probleme")
+        print("pas trouvé")
         rep = requests.get(url,headers={'User-Agent': 'Mozilla/5.0'})
         soup = BeautifulSoup(rep.content, "html.parser")
-        soupe = soup.find(class_="warning")
-        web=soupe.get_text()
+        web="<h1>offre non disponible</h1>"+soup.get_text()
+        
      # creer un pdf en utilisant la "soup" restante
     html = weasyprint.HTML(string=web)
     css = []
